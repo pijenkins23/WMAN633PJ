@@ -19,10 +19,30 @@ head(beach)
 fit <-lm(formula = OpenBeach ~ Year * BeachID , data = beach)
 summary(fit)
 
-fit.resid <- residuals(fit)
 
-hist(fit.resid)
+# first calculating dummy variables for levels b and c
+beach$b <- ifelse(beach$BeachID == 'B', 1, 0)
+beach$c <- ifelse(beach$BeachID == 'C', 1, 0)
 
+# storing coefficient for quick retrieval
+b <- coef(fit)
+b
+# predicting new values for y (manually calculating y) 
+prd <- b[1] +               # intercept value 
+  b[2] * beach$Year  +           #year 
+ b[3] * beach$b     +        # b dummy var
+ b[4] * beach$c      +        # c dummy variable 
+ b[5] * beach$Year * beach$b   +           # interaction year and b 
+ b[6] * beach$Year * beach$c    # interaction betweenyear and c 
+
+prd 
+
+# calculating residuals ( real - predited values)
+res <- beach$OpenBeach - prd
+summary(res)
+
+
+hist(res)
 ```
  Yes based off of the Histogram above the residuals are close enough a normal distribution. 
 
