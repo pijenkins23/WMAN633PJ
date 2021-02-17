@@ -1,0 +1,113 @@
+---
+title: "JenkinsExam1"
+author: "Peter Jenkins"
+date: "2/17/2021"
+output: html_document
+---
+## Use this dataset to answer the following questions:
+
+### 1. Import this dataset into R and inspect the first several rows of your data
+```{r}
+dat <- read.csv("Exam 1 Data.csv")
+head(dat)
+```
+
+### 2. Fit a linear model that assumes your response is a function of x1, x2, and x3. Include an interaction between x1 and x2 only (i.e., do not include an interaction between your categorical variables and any other variables).
+```{r}
+fit <- lm (y ~ x1 * x2 + x3, data= dat)
+fit
+summary(fit)
+```
+### 3. Interpret the effect of variable x1 when x2 = -1
+```{r}
+b <- coef(fit)
+b
+#Let’s quickly write out the linear model:
+
+# y = β0 + β1x1 + β2x2 + β3b + β4c + β5x1x2
+
+#and then collect terms associated with x2:
+
+# y = β0 + β2x2 + x1(β1 + β5x2) + β3b + β4c
+b[2] + b[6] * -1
+```
+### 4. Interpret the effect of variable x1 when x2 = 1
+```{r}
+b[2] + b[6] * 1
+```
+
+
+### 5. Interpret the effect of variable x3
+
+The difference in Y when all other variables are held constant between category b and a is 
+```{r}
+b[4]
+```
+
+The difference in Y when all other variables are held constant between category c and a  
+```{r}
+b[5]
+```
+### 6. Describe how R codes the categorical variable x3. Demonstrate by reporting the first 5 values of variables derived from x3
+
+R uses if else statements to create dummy variables for k -1, where k is the number of levels in your categorical variable. In our case k=3 for (A,B,C). A is the reference variable and so there are two additional columns created 
+ and combine using cbind. One of them is for the dummy variable b if it is b it will have a 1 if not it will be 0. The other is is for c if it is c then 1 if it is not c then 0. 
+```{r}
+cbind(dat$x3[1:5],
+      ifelse(dat$x3 == 'b', 1, 0)[1:5],
+      ifelse(dat$x3 == 'c', 1, 0)[1:5])
+```
+
+
+
+### 7. Derive the test statistic and p-value associated with the interaction between x1 and x2. What is the null hypothesis assumed by the "lm()" function? Do we reject or fail to reject this null hypothesis?  Defend your answer.
+```{r} 
+fit
+summary(fit)
+# test statistic
+tsInter <- coef(fit)[6] / summary(fit)[['coefficients']][6, 2] # no  est slope coef - null hypothesis because null hyp =0 
+tsInter; summary(fit)[['coefficients']][6, 3] # our calculated test statistic ; then showing value from table of fit summary 
+
+# determine degrees of freedom 
+rdf <- nrow(dat) - length(coef(fit))  # 62 - 6 number of observations minus total number of coefficient
+rdf
+
+# p-value
+2 * pt(abs(tsInter), df =rdf , lower.tail = FALSE)
+
+summary(fit)[['coefficients']][6, 4]
+```
+The null hypothesis is that x1* x2 = 0 . The alternative hypothesis (Ha) is x1*x2 does not = 0 
+We fail to reject the null hypothesis because the p value is 0.09 which is greater than the normally used 
+0.05 alpha (it could be considered statistically significant if we were using p value of 0.10)
+###########
+
+
+
+Other Questions
+
+### 8. assume you have the following realizations of random variable Y :y = (3, 8, 7)    Further assume realizations of the random variable Y are Gaussian distributed: y ∼ Gaussian(µ, σ2)    Fix σ2 = 1 and µ = 8, and evaluate the probability density at each of your 3 realizations.
+```{r}
+y <- c(3,8,7) # assigning realizations of random var y 
+
+dnorm(y, 8, 1) # getting prob densities 
+
+
+```
+### 9. What is a type I error? What is a p-value? How are the two quantities related?
+
+
+Type 1 error is falsely rejecting a null hypothesis that is true, it is equal to the alpha value we chose such as 0.05 
+
+P value is the probability of observing a more extreme value of a test statistic, under the assumptions of the null hypothesis.
+Observing extreme values of a test statistic is unlikely based on our assumptions of the null hypothesis, 
+So if we observe significantly large values of our test statistic we can conclude that these were not likely to occur under the assumption pf the null hypothesis and therefor we can reject our null hypothesis.  
+
+In other words, we only reject the null hypothesis if our p-value is smaller
+than some pre-determined quantity. This is often p < 0.05, corresponding
+to a Type I error probability of 0.05. That means there is a 5% chance of identifying a difference 
+ when there really isnt one. 
+
+### 10. What is a fundamental assumption we must make to derive inference about regression coefficients of a linear model?
+  
+One crucial assumption we must make to derive inference about our regression coefficients in our linear model is that the residuals follow a gaussian distribution. We assume gaussian error! 
