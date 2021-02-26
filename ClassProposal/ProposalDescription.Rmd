@@ -1,0 +1,38 @@
+---
+title: "ProjectProposal"
+author: "Peter Jenkins"
+date: "2/26/2021"
+output: html_document
+---
+## 1 Description of Study System and Experimental Design
+A total of 45 muskellunge were collected via boat electrofishing at 4 different access location on Stonewall Jackson Lake in March of 2020. All Muskellunge were weighed, measured for length fin clips were taken for aging estimation, sexed externally, and confirmed if eggs were visually present during surgery.  Each Muskellunge was scanned for a PIT tag and received one if it did not have one from stocking, all juveniles stocked since 2013 that were large enough have received PIT tags prior to stocking. A radio telemetry transmitter was inserted into the abdominal cavity using the trailing whip method, additionally an external dart tag was placed in the dorsal musculature near the dorsal fin to allow for angler identification of individuals. The external dart tag will have contact name with a phone number and “DO NOT REMOVE” printed on it along with the individual tag number. Signs with information about this project and the dart tags will be posted at all boat ramps as well as online angler websites indicating that between June and August anglers will receive a $50 reward for reporting a tagged fish. 
+
+Manual radio telemetry tracking took place monthly until the summer period, June through September when water temperatures were elevated. During the summer period Muskellunge were tracked weekly. Global position system (GPS; Garmin E-Trex; Garmin International, Inc.; Olathe, KS, USA) coordinates will be taken at each location. Water temperature and dissolved oxygen profiles will also be measured at each location using a YSI PRO 10 (YSI Inc., Yellow Springs, Ohio, USA). Stonewall Jackson Lake, West Virginia represents a classic southern flood control reservoir characterized by; flooded timber, dimictic stratification, increased water temperature and a stocked Muskellunge population.The lake is managed by a 52 inch minimum length limit essentially making this a catch and release fishery with the exception of a record size fish. This makes it an ideal study area for identifying the impact of delayed catch and release fishing mortality on Muskellunge in their southern range. 
+
+I will use tracking locations to estimate home range size using Kernel Density Estimates or Minimum Convex Polygon estimates. 
+
+##  2 Question to address 
+
+1. How does water temperature impact catch and release mortality?
+2. How does C&R angling impact home range size of muskellunge?
+3. How is home range size impacted by water temperature and dissolved oxygen? 
+4. How does home range change in regards to fish size or sex? 
+
+
+## 3. A description of your data, including explicit reference to your response and potential predictor variables
+
+```{r}
+# loading data 
+dat <- read.csv('CombinedMuskyDat.csv')
+head(dat)
+
+
+
+```
+
+Response Data is latitude and longitude for home range estimates. While the potential predictor variables are temperature and dissolved oxygen variables (Surface and Thermocline). Seasonal recapture events, weight, length, sex, and temperature and dissolved oxygen variables are potential predictors. 
+
+
+# 4 unique or interesting facts about my data 
+
+One of the muskellunge was recaptured by anglers 3 different times in 2020. 
