@@ -1,0 +1,112 @@
+---
+title: "Homework4"
+author: "Peter Jenkins"
+date: "3/15/2021"
+output: html_document
+---
+# Homework
+#1. Fit a Poisson regression model that assumes expected count is an interactive function of variables x1
+#and x2.
+```{r}
+dat <- read.csv('Homework 4 Data.csv')
+head(dat)
+fit <- glm(y ~ x1 * x2, family = poisson, data = dat)
+
+summary(fit)
+
+```
+
+
+#2. Interpret the effect of variable x1 on the expected count when x2 is fixed at level "b". Verify your interpretation in R.
+```{r}
+b <- coef(fit)
+b
+# log expected count at x1 = 1
+x1.1 <- b[1] + b[2] * 1 + b[3] * 1+ b[4]
+x1.1
+
+# Log expected count at x1 = 2 
+x1.2 <- b[1] + b[2] * 2 +  b[3] * 1 + b[4]
+x1.2
+
+log(exp(x1.2) / exp(x1.1))
+b[2]
+
+# expressed as count change
+exp(x1.2) / exp(x1.1)
+
+exp(b[2])
+
+```
+
+
+The log expected count decreases by -0.0994 for each unit increase of x1 when x2 is fixed at level 'b'. 
+The expected count increased by 0.905 for each unit increase of x1 when x2 is fixed at level 'b'. 
+
+#3. Interpret the effect of variable x2 on the expected count when x1 is fixed at 1. Verify your interpretation in R.
+```{r}
+
+# log expected count at x1 = 1
+x2b <- b[1] + b[2] * 1 + b[3] * 1+ b[4]
+x2b
+# Log expected count at x1 = 2 
+x2a <- b[1] + b[2] * 1  + b[4]
+x2a
+
+log(exp(x2b) / exp(x2a))
+b[3]
+
+# expressed as count change
+exp(x2b) / exp(x2a)
+
+exp(b[3])
+
+```
+
+The change in expected count when x1 = 1 is 0.351 between groups a and b. 
+
+
+#4. Predict the expected count, ± 95% confidence intervals, over the observed range of values of x1, assuming x2 is fixed at level "b".
+```{r}
+
+nd <- data.frame(
+  x1 = seq(min(dat$x1), max(dat$x1), length.out = 100),
+  x2 = factor(x = rep('b', times = 100),
+                   levels = c('a', 'b'))
+  
+)
+prd <- predict.glm(object = fit, newdata = nd, type = 'link', se.fit = T)
+
+low <- exp(prd$fit + qnorm(0.025) * prd$se.fit)# quantile related to 2.5% on one side of tail for 5% A
+# or low <- exp(prd$fit - qnorm(0.975) * pred$se.fit)
+high <- exp(prd$fit - qnorm(0.025) * prd$se.fit)
+
+# plotting predicted values
+plot(y = exp(prd$fit), x = nd$x1, xlab = 'x1',
+     ylab = 'Expected count', cex.axis = 1.5, cex.lab = 1.5,
+     ylim = c(min(low), max(high)), type = 'l')
+lines(x = nd$x1, y = low, lty = 2)
+lines(x = nd$x1, y = high, lty = 2)
+
+
+```
+
+#5. Predict the expected count, ± 95% confidence intervals, of levels "a" and "b", assuming x1 is fixed at it’s mean.
+```{r}
+
+nd <- data.frame(
+  x1 = rep(mean(dat$x1), times = 1),
+  x2 = factor(x = rep(c('a','b'), times = 1),
+              levels = c('a', 'b'))
+  
+)
+prd <- predict.glm(object = fit, newdata = nd, type = 'link', se.fit = T)
+
+low <- exp(prd$fit + qnorm(0.025) * prd$se.fit)# quantile related to 2.5% on one side of tail for 5% A
+# or low <- exp(prd$fit - qnorm(0.975) * pred$se.fit)
+high <- exp(prd$fit - qnorm(0.025) * prd$se.fit)
+
+expA <- exp(prd$fit[1]) 
+expACI <- c(low[1], high[1])
+
+```
