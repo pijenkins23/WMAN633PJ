@@ -1,0 +1,144 @@
+---
+title: "Exam2"
+author: "Peter Jenkins"
+date: "3/22/2021"
+output: html_document
+---
+
+# 1. Import this dataset into R and inspect the first several rows of your data
+
+
+```{r}
+dat <- read.csv('Exam 2 Data.csv')
+head(dat)
+```
+
+# 2. Fit a Poisson model that assumes your response is a function of x1, x2, and x3. Include an interaction between x1 and x2 only (i.e., do not include an interaction between your categorical variables and any other variables).
+
+
+```{r}
+fit <- glm(y~ x1* x2 + x3, family =poisson, data=dat)
+summary(fit)
+```
+
+
+# 3. Interpret the effect of variable x1 when x2 = -1
+```{r}
+b <- coef(fit)
+b
+b[2] + b[6] * -1
+```
+
+
+
+Thus, the log odds of success decreases by 0.746 for every 1-unit increase in x1.  
+
+# 4. Plot expected counts ±90% confidence intervals over the observed range of variable x1. Assume variable when x2 = -1 and category "a".
+```{r}
+
+newdat <- data.frame(
+  x1 = seq(min(dat$x1), max(dat$x1), length.out = 100),
+  x2 = -1,
+  x3 = factor('a', levels = c('a', 'b', 'c'))
+)
+
+prd <- predict.glm(fit, newdat, se.fit = T)
+
+low <- plogis(prd$fit - qnorm(0.95) * prd$se.fit)
+high <- plogis(prd$fit + qnorm(0.95) * prd$se.fit)
+
+plot(x = newdat$x1, y = plogis(prd$fit), ylim = c(min(low), max(high)), type = 'l')
+lines(x = newdat$x1, y = low, lty = 2)
+lines(x = newdat$x1, y = high, lty = 2)
+
+
+```
+
+# 5. Interpret the effect of variable x3
+```{r}
+summary(fit)
+
+```
+
+The difference in log odds between category b and a is 0.375. 
+The difference in log odds between category c and a is -0.884.  
+
+
+
+# 6. Use contrasts to evaluate the null hypothesis that the difference in log expected count between levels "b" and "c" = 0. Fix x1 and x2 at their means.
+
+```{r}
+b
+x <- matrix(c(0, 0, 0, -1, 1,0), nrow = 1)# nothing for int,  x1,  x2, -1  subtract b from c
+x
+y <- matrix(b, ncol = 1)
+# matrix math
+x %*% y
+b[5]- b[4]
+
+library(multcomp)
+summary(glht(fit,x))
+
+```
+The null hypothesis is that when x1 and x2 are at their means the difference between 'b' and 'c' is equal to zero. Based on our low pvalue (2e-16) we reject our null hypothesis and can say there is a difference between 'b' and 'c'. 
+
+
+# 7. Derive the test statistic and p-value associated with the interaction between x1 and x2. What is the null hypothesis? Do we reject or fail to reject this null hypothesis? Defend your answer.
+```{r}
+
+s <- summary(fit)[['coefficients']][, 2]
+
+# test statistic
+b[6] / s[6]
+
+pnorm(-1 * abs(b[6] / s[6])) * 2
+```
+
+
+The null hypothesis is that β5=0. To see the interpretation, we can further evaluate our 
+effective slope coefficient for x1. Recall from previously:
+  
+  yx1+1,x2−yx1,x2=β1+β5x2
+
+which is evaluated at an arbitrary value of x2.
+
+If we evaluate the same expression at x2+1 and find the difference with the previous expression:
+  
+  yx1+1,x2+1−yx1,x2+1=β1+β5(x2+1)=β1+β5x2+β5
+(yx1+1,x2+1−yx1,x2+1)−(yx1+1,x2−yx1,x2)=β5
+
+In words, we can interpret this to mean β5 is the change in the effective slope coefficient of x1
+associated with a 1-unit change in x2. Given our small pvalue we can reject the null hypothesis, 
+we can say there is evidence the the effect of variable x1 depends on the level of x2.  
+
+
+
+
+# Other Questions
+# 8. assume you have the following realizations of random variable Y :
+ y = (1, 0)
+Further assume realizations of the random variable Y are Bernoulli distributed:
+  y ∼ Bernoulli(p).
+# What is the probability of observing each of these random variables assuming the log odds of success =-2?
+```{r}
+dpois(c(1,0), exp(-2))
+
+```
+  
+
+  
+  
+# 9. What is the "support" of a Bernoulli random variable? What are the acceptable values of it’s sole parameter? To which quantity do we apply a link function, and why do we do this? What is the principle link function we use in binomial (i.e., logistic) regression, and what it it’s inverse function?
+
+
+
+We apply a logit link function to the sole parameter in the Bernoulli distribution that describes the probability of success. We do this so we can model probability of success on the real number line (without constraints), and transform the logit link predictor to a number between 0 and 1 that describes probaility of successs. 
+
+We use the logit link function to map a number bounded between 0 and 1 to the real number line. 
+
+We use the inverse logit link function (the inverse of the log function) to map a number on the real number line to a positive real number to the (0,1) interval. 
+
+#  10. What is a fundamental assumption we make to derive inference when comparing two levels of a categorical random variable?
+
+That linear combinations of Gaussain random variables are themselves random variables. 
+
