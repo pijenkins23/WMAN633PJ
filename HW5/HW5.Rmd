@@ -1,0 +1,108 @@
+---
+title: "HW5"
+author: "Peter Jenkins"
+date: "4/1/2021"
+output: html_document
+---
+1. Load data and place into an unmarkedFrameOccu object
+
+```{r}
+library(unmarked)
+y <- read.csv("Bobcat.csv")
+head(y)
+
+bob_mat <- as.matrix(y)
+
+site_cov <- read.csv('psi covariates.csv')
+
+head(site_cov)
+
+det_covs <- read.csv('p covariates.csv')
+head(det_covs)
+
+det_cov <- list(
+  
+  people = data.frame(det_covs))
+
+nmix_data <- unmarkedFramePCount(y = bob_mat, siteCovs = site_cov,
+                                 
+                                 obsCovs = det_cov)
+
+
+```
+
+2. Fit an occupancy model that assumes conditional detection probability is a function of the number of people photographed at a site, and occupancy probability is a function of disturbance within 5km.
+```{r}
+fit <- pcount(formula = ~ people  ~ Dist_5km,
+              data = nmix_data)
+
+```
+
+
+3. Interpret the effect of the number of people photographed at each site on conditional detection probability of bobcat. Verity your interpretation in R.
+```{r}
+
+summary(fit)
+
+# log of expected count decreases for each 1 unit increase in proportion of area within 5km recently disturbed
+
+# log estimated abundance 
+e_y <- mean(as.matrix(y))
+p <- plogis(coef(fit[2]))
+
+e_y / p
+exp(coef(fit[1]))
+
+
+```
+
+4. Re-create the Wald test for the effect of disturbance within 5km. What is the null hypothesis? Do you reject or fail to reject this null hypothesis?
+```{r}
+w <- -23.69 / 4.4307
+w
+## [1] -4.208314
+2 * pnorm(-1 * abs(w))
+
+```
+
+
+We reject the null hypothesis because our p value is smaller than 0.05. 
+  
+5. Predict and plot the effect of disturbance within 5km on bobcat occupancy probability.
+Do this over the range of observed disturbance within 5km.
+```{r}
+
+new_lam <- data.frame(Dist_5km = seq(min(site_cov$Dist_5km),max(site_cov$Dist_5km), length.out = 100))
+
+
+prd <- predict(object = fit, newdata = new_lam,
+               
+               type = 'state')
+
+prd
+
+
+betas <- coef(fit)
+betas
+
+# linear model
+exp(betas[1] + betas[2] * min(site_cov$Dist_5km) )
+
+
+dist <- seq(min(site_cov$Dist_5km),max(site_cov$Dist_5km), length.out = 100)
+# plotting 
+
+
+mydata <- cbind(dist, prd)
+# 2. Regression line + confidence intervals
+library("ggplot2")
+p <- ggplot(mydata, aes(dist, Predicted)) +
+  geom_point() +
+  xlab('Disturbance within 5 km') +# for the x axis label
+ylab('Occupancy Probability')
+  
+# 3. Add prediction intervals
+p + geom_line(aes(y = lower), color = "red", linetype = "dashed")+
+  geom_line(aes(y = upper), color = "red", linetype = "dashed")
+
+```
