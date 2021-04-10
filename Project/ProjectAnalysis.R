@@ -35,24 +35,24 @@ res <- spTransform(hr, CRS("+proj=utm +zone=17N ellps=WGS84"))
 head(res)
 
 
-kernel.ref <- kernelUD(res, h = "href" , grid=1000, extent= 5)  # href = the reference bandwidth
-image(kernel.ref$`13`) # plot
+#kernel.ref <- kernelUD(res, h = "href" , grid=1000, extent= 5)  # href = the reference bandwidth
+#image(kernel.ref$`13`) # plot
 
-kernel.ref[[1]]@h # The smoothing factor is stored for each animal in the "h" slot
+#kernel.ref[[1]]@h # The smoothing factor is stored for each animal in the "h" slot
 
 #kernel.lscv <- kernelUD(hr, h = "LSCV") # Least square cross validation
 
 #image(kernel.lscv) # plot
 #plotLSCV(kernel.lscv) # Look for a dip
 # hectares by default.
-turtle.kernel.poly.95 <- getverticeshr(kernel.ref, percent = 95) 
-print(turtle.kernel.poly)  # returns the area of each polygon
+#turtle.kernel.poly.95 <- getverticeshr(kernel.ref, percent = 95) 
+#print(turtle.kernel.poly)  # returns the area of each polygon
 
-turtle.kernel.poly.50 <- getverticeshr(kernel.ref, percent = 50) 
-print(turtle.kernel.poly)  # returns the area of each polygon
+#turtle.kernel.poly.50 <- getverticeshr(kernel.ref, percent = 50) 
+#print(turtle.kernel.poly)  # returns the area of each polygon
 
-plot(turtle.kernel.poly.95 ) 
-par(mfrow=c(1,1))
+#plot(turtle.kernel.poly.95 ) 
+#par(mfrow=c(1,1))
 
 musky <- data.frame(
   "Radio.Tag" = unique(dat$Radio.Tag))
@@ -62,7 +62,7 @@ head(musky)
 
 # using MCP instead of KDE 
 # MCP 
-musky.mcp <- mcp(res, percent = 95)
+musky.mcp <- adehabitatHR::mcp(res, percent = 95)
 
 #Calculate the MCP by including 50 to 100 percent of points
 var.per <- seq(50, 100, by = 5)
@@ -73,7 +73,7 @@ str(hrs)
 musky$MCP95 <- musky.mcp$area
 musky$MCP95ID <- musky.mcp$id
 
-musky <- musky %>% select(1,3,4)
+
 head(musky)
 write.csv(musky, "MuskyHomeRange.csv")
 
@@ -85,8 +85,11 @@ dat <- merge(tag,musky, by = "Radio.Tag")
 datc <- dat[-c(3,36),]
 datc
 
-boxplot(MCP95~ Cap..Site, data=datc, main="MCP",
-        xlab="Capture Site", ylab="Home Range MCP ha")
+boxplot(MCP95~ Rel..Site, data=datc,
+        par(mar = c(15, 5, 4, 2)+ 0.1), 
+        las = 2, xlab="", ylab="MCP Home Range (ha)",
+        cex.axis = 1.5,
+        cex.lab = 1.5)
 
 boxplot(MCP95~ Recaptured..summer.angling., data=datc, main="MCP",
         xlab="Capture Site", ylab="Home Range MCP ha")
@@ -105,10 +108,10 @@ summary(fit)
 # model selection AIC for Gamma
 
 fit1 <- glm(MCP95 ~ TL..mm., data = datc , family= Gamma)
-fit2 <- glm(MCP95 ~ Sex, data = datc , family= Gamma)
-fit3 <- glm(MCP95 ~ Cap..Site, data = datc , family= Gamma)
-fit4 <- glm(MCP95 ~ TL..mm.+ Cap..Site, data = datc , family= Gamma)
-fit5 <- glm(MCP95 ~ TL..mm.+ Cap..Site + Sex, data = datc , family= Gamma)
+fit2 <- glm(MCP95 ~ TL..mm. + Sex, data = datc , family= Gamma)
+fit3 <- glm(MCP95 ~ Rel..Site, data = datc , family= Gamma)
+fit4 <- glm(MCP95 ~ TL..mm.+ Rel..Site, data = datc , family= Gamma)
+fit5 <- glm(MCP95 ~ TL..mm.+ Rel..Site + Sex, data = datc , family= Gamma)
 
 
 cand.set <- list(
@@ -122,8 +125,11 @@ cand.set <- list(
 #install.packages("AICcmodavg")
 library(AICcmodavg)
 mods <- aictab(cand.set = cand.set, second.ord = F)
+mods[,1] <-  c('TL', 'TL +Sex' , 'Release Site' , "TL + Release Site", "TL + Release Site + Sex" )
+
 head(mods)
 
+write.csv(mods,"G:\\My Drive\\QuantEcology\\HomeRangeProject\\AICtab.csv", row.names = FALSE)
 
 # model selection AIC for lm
 
