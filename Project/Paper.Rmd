@@ -1,0 +1,182 @@
+---
+title: "Impact of Muskellunge Size, Sex and Tagging Location on Homerange Size in Stonewall Jackson Lake"
+author: "PeterJenkins"
+date: "April 7, 2021"
+output: pdf_document
+indent: true
+header-includes:
+    - \usepackage{setspace}\doublespacing
+    - \pagenumbering{arabic}
+    - \usepackage[left]{lineno}
+    - \linenumbers
+geometry: margin=1in
+fontsize: 12pt 
+bibliography: library.bib
+csl: the-journal-of-wildlife-management.csl
+---
+
+
+
+\newpage
+While previous work has investigated movement, habitat use and catch and release angling mortality of Muskellunge (Esox masquinongy, Mitchill, 1824) in their northern geographic range, the Upper Midwest, Great Lakes- St. Lawrence River and Ontario, (@Beck; @Hanson1992; @Wagner2011; @Landsman2011; @Owensby2017), similar information is sparse for southern populations. Several studies have used biotelemetry to assess movement, home range, habitat selection and mortality on riverine populations and stocked juvenile Muskellunge (@Beck; @Brenden2006a; @Wagner2011; @Owensby2017). Except for @Cole2014a little information is available on the impact of southern environmental conditions, such as increased water temperature and decreased dissolved oxygen availability, have on Muskellunge in a southern reservoir system. The impact these environmental changes could have are becoming increasingly important for managers to know as these fisheries, sustained by stocking, have become extremely popular for Muskellunge anglers. 
+
+A total of 45 muskellunge were tagged in Stonewall Jackson lake in March of 2020. Fish were collected,tagged and released at 6 different location on Stonewall Jackson lake (Figure 1).
+![Figure 1. Muskellunge tagging release locations on Stonewall Jackson Lake March 2020.](G:\\My Drive\\QuantEcology\\HomeRangeProject\\2020ReleaseSites.jpg)
+Figure 1. The 6 tagging and release sites for muskellunge in March 2020. 
+
+We attempted to track all 45 muskellunge each week from June 2nd through September 19th. We recorded a GPS location, surface temperature, dissolved oxygen and conductivity at each muskellunge location. Since Stonewall Jackson Lake stratifies and below the thermocline can be hypoxic, we measured the depth at which the dissolved oxygen measurement dropped below 4 mg/l as well as the associated water temperature. Additional data was collected starting April 6th biweekly locations were obtained, as well as locations gathered when directing anglers to target tagged muskellunge.
+
+
+Stonewall Jackson Lake, West Virginia represents a classic southern flood control reservoir characterized by; flooded timber, dimictic stratification, increased water temperature and a stocked Muskellunge population. The objectives of this study is to (1) identify and describe what impacts Muskellunge home range size. 
+
+Field Protocols
+
+
+All research activity was approved by the West Virginia University Institutional Animal Care and Use Committee under protocol # 1910030520.  To evaluate the effect of temperature on survival of catch and release Muskellunge first, we will collect a total of 90 individual Muskellunge to surgically implant radio telemetry transmitter (Advanced Telemetry Systems, Isanti, Minnesota, USA; model F1850B; weight 27g; battery life 792 days). Muskellunge that do not already have a passive integrated transponder (PIT) tag (Biomark, Inc, Boise, Idaho) will be implanted with one in the upper dorsal musculature.  In addition, we will add an external dart tag (Hallprint, Hindmarsh Valley, South Australia) inserted into the dorsal musculature just posterior to the dorsal fin, allowing for angler identification to report recaptures. The external dart tag will have contact name with a phone number and “DO NOT REMOVE” printed on it along with the individual tag number. Signs with information about this project and the dart tags will be posted at all boat ramps as well as online angler websites indicating that between June and August anglers will receive a $50 reward for reporting a tagged fish. 
+For this study Muskellunge will be collected by boat electrofishing by the West Virginia Division of Natural Resources (WVDNR) at all 4 of the boat access points on Stonewall Jackson Lake. Because the objective of this study was to collect 90 individual Muskellunge (n=45 in 2020 and n= 45 in 2021), to implant radio transmitters, we will specifically target known Muskellunge spawning habitat and immediately adjacent locations to capture fish in the staging area. Muskellunge spawning habitat is defined as shallow water (< 1-meter-deep) with organic sediment, woody debris, and submerged vegetation(@W.B.Scott&E.J.Crossman1973; @Dombeck1984; @Zorn1998). Muskellunge will be collected from late winter (January) into spring (April) during the pre-spawn and spawning periods, when fish are most susceptible to sampling and water temperatures are low reducing stress. 
+	
+
+Muskellunge will be immobilized using low powered nonplussed DC (4, 6.3, 10, 16, 25 mA) using electric fish handling gloves (Smithroot, Vancouver, Washington, USA). Electro immobilization provides the benefit of rapid induction and recovery time as well as no withdrawal period, allowing for immediate release back into a wild system (@Vandergoot2011;@Faust2017a; @Ward2017a). All fish will be measured to the nearest mm (total length) and fish will be weighed to the nearest 0.02 kg. Water will be pumped over the gills to continuously irrigate them, supplying oxygen to the fish while immobilized. Each fish will have a trailing-whip radio telemetry transmitter (Advanced Telemetry Systems, Isanti, Minnesota, USA; model F1850B or model F1850T; weight 27g; battery life 792 days) implanted into the coelom thought a small incision on the ventral side of the fish posterior to pelvic girdle 1 cm off the midline of the fish. A 14g catheter will be used to create a hole for the external antenna to exit the abdominal wall 1 cm posterior to the incision using a grooved director to shield internal organs, similar to the shielded needle technique (@Ross1982). The antenna of the radio telemetry tag will be inserted through the catheter needle and the catheter will be removed. The tag weight will remain less than 2 percent of the weight of the fish (@Winter1996). A simple interrupted pattern of partially dissolvable monofilament sutures will be used to close the incision (@Cooke2003, @Cooke2011; @Wagner2011a; @Huhn2014).  All surgical equipment will be sterilized in glutaraldehyde solution before each surgery session and disinfected in-between surgeries using betadine solution (povidone-iodine). The use of electro immobilization allows for the immediate release of post-surgery fish because there is no delay in their ability to maintain equilibrium and demonstrates normal swimming ability. If the muskellunge struggle maintaining normal orientation in the water column, swimming movement and reacting to stimuli the Muskellunge will be held in a holding tank until they are recovered, then it will be released into the lake. The total procedure from onset of immobilization to return to the lake should take no longer than 6 minutes. 
+
+I will attempt to locate all fish weekly during the summer period, between June and the end of September, and monthly during October – May. We recorded a GPS location, surface temperature, dissolved oxygen and conductivity at each muskellunge location. Since Stonewall Jackson Lake stratifies and below the thermocline can be hypoxic, we measured the depth at which the dissolved oxygen measurement dropped below 4 mg/l as well as the associated water temperature. 
+
+
+Statistical Model Description 
+
+Our response variable was Minimum Convex Polygon home range size. Yi denotes home range size for each individual i, which we modeled as a Gamma random variable. Home range estimates were calculated for each muskellunge using the weekly tracking locations from June 2nd to September 19th, in the mcp function in the adehabitatHR package in R (@Calenge2006). 
+
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(equatiomatic)
+library(adehabitatHR)
+library(dplyr)
+#install.packages("AICcmodavg")
+library(AICcmodavg)
+library(multcomp)
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+# loading data
+dat <- read.csv("CompletedatawWQ.csv")
+
+hr <- dat[c("Radio.Tag",'lat', 'lon')]
+
+hr <- hr[!is.na(hr$lat) & !is.na(hr$lon),]
+
+coordinates(hr) <- c('lat','lon')
+
+# The sample data are lat long from WGS 84
+proj4string(hr) <- CRS( "EPSG:4326" )
+
+# converting to utm from lat lon
+res <- spTransform(hr, CRS("+proj=utm +zone=17N ellps=WGS84"))
+
+musky <- data.frame(
+  "Radio.Tag" = unique(dat$Radio.Tag))
+
+head(musky)
+
+
+# using MCP instead of KDE 
+# MCP 
+musky.mcp <- adehabitatHR::mcp(res, percent = 95)
+
+
+musky$MCP95 <- musky.mcp$area
+musky$MCP95ID <- musky.mcp$id
+
+musky 
+
+tag <- read.csv('MuskyTaggingData.csv')
+
+
+dat <- merge(tag,musky, by = "Radio.Tag")
+datc <- dat[-c(3,36),]
+
+datc$Rel..Site <- as.factor(datc$Rel..Site)
+
+
+```
+
+
+I modeled home ranges size as a function of predictor variables sex, length and tagging location. Sex was determined at the time of tagging using urogenital morphology, presence of freeflowing milt or confirmation of eggs when the incision was made. Length was measured as total length in millimeters. Tagging location was a categorical variable based on the 6 tagging and release locations. 
+
+The following models will be fit and compared using model selection. Models were created with increasing complexity, starting with the simplest model which home range is predicted by the length of the fish. The second model includes the base model and adds the sex of the fish as a secondary predictor variable. The third model is only using the release site to predict home range size, to see if home range size changes based on the different areas of the lake. The fourth model combines the total length of the fish and the release site to predict home range. The fifth and final model includes total length, release site and sex as predictors of home range size.
+
+
+```{r, echo= FALSE}
+
+
+fit1 <- glm(MCP95 ~ TL..mm., data = datc , family= Gamma)
+fit2 <- glm(MCP95 ~ TL..mm. + Sex, data = datc , family= Gamma)
+fit3 <- glm(MCP95 ~ Cap..Site, data = datc , family= Gamma)
+fit4 <- glm(MCP95 ~ TL..mm.+ Rel..Site, data = datc , family= Gamma)
+fit5 <- glm(MCP95 ~ TL..mm.+ Rel..Site + Sex, data = datc , family= Gamma)
+
+equatiomatic::extract_eq(fit1)
+equatiomatic::extract_eq(fit2)
+equatiomatic::extract_eq(fit3, wrap = TRUE)
+
+equatiomatic::extract_eq(fit4, wrap = TRUE)
+
+equatiomatic::extract_eq(fit5, wrap = TRUE)
+
+
+```
+
+
+I will use AIC model selection to determine the top variables in the model and I will assume that they best describe our response. 
+
+
+Table 1. AIC table from Gamma model selection.
+```{r, echo=FALSE }
+
+# model selection AIC for Gamma
+
+cand.set <- list(
+  P1 = fit1, 
+  P2 = fit2,
+  P3 = fit3, 
+  P4 = fit4,
+  P5 = fit5
+  
+)
+
+
+mods <- aictab(cand.set = cand.set, second.ord = F)
+
+mods[,1] <-  c('TL', 'TL +Sex' , 'Release Site' , "TL + Release Site", "TL + Release Site + Sex" )
+
+
+
+kable(mods, digits = 2)
+```
+
+Results 
+
+I collected a total of 749 unique tracking location between June 2nd and September 19th. On average we located 42 muskellunge each week. Each muskellunge was located an average of 12 times with the lowest number of locations for a single muskellunge being 10 and the highest being 20. This sample size restricted analysis to mcp estimation of home range size as kernel density estimates of home range size need >20 locations per individual. 
+
+While the model with length, sex and release site had the smallest AIC value (Table 1). The model with length and release site had a very similar AIC value and simpler model which is easier to interpret. Since the AIC values for the more complicated model was within 2 AIC values from the top model, sex does not greatly increase our predictive power of home range size. Sex of an individual when combined with total length and release location in our model was not statistically significantly, providing even more justification that the best predictors of home range size are total length and release location. 
+
+The tagging and subsequent release location of muskellunge in Stonewall Jackson has a significant impact on the home range of each individuals (Figure 2).The tagging and release location is highly variable for Mary Conrad Park, which could indicate that the muskellunge that spawn in the Mary Conrad Park are more mobile. Whereas the fish in Little Skin Creek or the State Park area have much smaller home ranges. 
+
+
+```{r, echo= FALSE}
+
+boxplot(MCP95~ Rel..Site, data=datc,par(mar = c(12, 5, 4, 2)+ 0.1), las = 2, xlab="", ylab="MCP Home Range (ha)")
+
+
+```
+Figure 2. Minimuim Convex Polygon home range estimates for each tagging and release location for muskellunge in Stonewall Jackson Lake. 
+
+
+
+
+
+
+
+\newpage
+
+References 
+
+
