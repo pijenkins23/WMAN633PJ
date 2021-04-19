@@ -1,0 +1,174 @@
+---
+title: "HW7"
+author: "PeterJenkins"
+date: "April 19, 2021"
+output: html_document
+---
+#1. Load data and place into an unmarkedFrameOccu object count data
+```{r}
+
+y <- read.csv('Bobcat.csv')
+bob_mat <- as.matrix(y)
+# detection covariates
+p_covs <- read.csv('p covariates.csv')
+det_covs <- list(
+  people = p_covs)
+  
+
+
+# site-level covariates
+site_covs <- read.csv('psi covariates.csv')
+
+library(unmarked)
+# formatting for pcount()
+nmix_data <-
+  unmarkedFrameOccu(y = bob_mat, # detection / non-detection
+                      siteCovs = site_covs, # site-level covs
+                      obsCovs = det_covs) # detection covariates
+
+
+```
+
+
+
+
+#2. Fit the following candidate set of models:
+  
+ # detection model     occupancy model
+#intercept-only       intercept-only
+#people                intercept-only
+#intercept-only           disturbance
+#people                 disturbance
+
+```{r}
+
+fit_int <- occu(~ 1 ~ 1, data = nmix_data)
+summary(fit_int)
+
+
+fit_pInt <- occu(~ people ~ 1, data = nmix_data)
+summary(fit_pInt)
+
+fit_IntDist <- occu(~ 1 ~ Dist_5km, data = nmix_data)
+summary(fit_IntDist)
+
+
+fit_PDist <- occu(~ people ~ Dist_5km, data = nmix_data)
+summary(fit_PDist)
+
+```
+
+
+
+
+
+
+#3. Perform model selection with AIC. What is your top model? How do you know? Is there model selection uncertainty?
+```{r}
+
+#install.packages("AICcmodavg")
+library(AICcmodavg)
+
+cand.set <- list(
+  P1 = fit_int, P2 = fit_pInt, P3 = fit_IntDist, P4 = fit_PDist)
+
+mods <- aictab(cand.set = cand.set, second.ord = F)
+head(mods)
+
+
+
+```
+The model with the Intercept and Distance is the best model because it has the lowest AIC value, however People and Distance also has support at the delta AIC is within 2 of the top model. 
+  
+  
+#4. Average both the effect of people on detection, and disturbance on occupancy, over all models. Report model-averaged slope coefficients and 95% confidence intervals.
+```{r}
+
+avg_type_p <- modavgShrink(cand.set = cand.set,
+                           parm = 'people',
+                           second.ord = F,
+                           parm.type = 'detect')
+
+avg_type_p$Mod.avg.beta
+
+
+avg_type_p$Lower.CL
+avg_type_p$Upper.CL
+
+
+
+avg_type_dist <- modavgShrink(cand.set = cand.set,
+                           parm = 'Dist_5km',
+                           second.ord = F,
+                           parm.type = 'psi')
+
+avg_type_dist$Mod.avg.beta
+
+
+avg_type_dist$Lower.CL
+avg_type_dist$Upper.CL
+
+
+
+```
+
+
+
+
+#5. Obtain and plot model-averaged predictions of occupancy probability and detection probability. Average over all models, and make predictions over the observed range of each variable.
+```{r}
+apply(X = p_covs[,-1], MARGIN = 2, FUN = max, na.rm = TRUE) # determing max number of people observed 
+apply(X = p_covs[,-1], MARGIN = 2, FUN = min, na.rm = TRUE) # determing max number of people observed
+
+
+
+new_dat <- data.frame(
+  people = seq(min(0), max(5.60), length.out = 100),
+  Dist_5km = seq(min(site_covs$Dist_5km), max(site_covs$Dist_5km), length.out = 100)
+  
+)
+
+  
+
+
+
+# calculating model averaged predictions occupancy 
+avg_prd <- modavgPred(cand.set = cand.set,
+                      newdata = new_dat,
+                      second.ord = F,
+                      conf.level = 0.95, 
+                      parm.type = "psi")
+
+plot(x = seq(0, 5.6, length.out = 100), y = avg_prd$mod.avg.pred,
+      xlab = 'Number People /100',
+     ylab = 'Ocuupancy Probability', cex.axis = 1.5,
+     cex.lab = 1.5, type= "l")
+lines(x = seq(0, 5.6, length.out = 100),
+      y = avg_prd$lower.CL,
+      lwd = 2)
+lines(x = seq(0, 5.6, length.out = 100),
+      y = avg_prd$upper.CL,
+      lwd = 2)
+
+# calculating model averaged predictions detection 
+avg_prd <- modavgPred(cand.set = cand.set,
+                      newdata = new_dat,
+                      second.ord = F,
+                      conf.level = 0.95, 
+                      parm.type = "detect")
+
+plot(x = dist, y = avg_prd$mod.avg.pred,
+     xlab = 'Proportion of area within 5km recently disturbed',
+     ylab = 'Detection Probability', cex.axis = 1.5,
+     cex.lab = 1.5, type= "l",
+     ylim = c(0,0.1))
+lines(x = dist,
+      y = avg_prd$lower.CL,
+      lwd = 2)
+lines(x = dist,
+      y = avg_prd$upper.CL,
+      lwd = 2)
+
+
+```
+
