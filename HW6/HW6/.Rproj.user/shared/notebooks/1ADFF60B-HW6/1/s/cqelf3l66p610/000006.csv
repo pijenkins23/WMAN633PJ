@@ -1,0 +1,7 @@
+"0",""
+"0","det_covs <- list("
+"0","  rep = obs_covs)"
+"0",""
+"0",""
+"0","site_covs <- read.csv('site_covs.csv')"
+"0","head(site_covs)"

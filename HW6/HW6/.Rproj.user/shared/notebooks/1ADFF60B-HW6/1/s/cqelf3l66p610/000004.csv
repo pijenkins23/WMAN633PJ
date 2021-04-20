@@ -1,0 +1,8 @@
+"0",""
+"0","library(unmarked)"
+"0","# converting count data into a matrix"
+"0","# matrix format required by unmarkedFramePCount"
+"0","sosp_mat <- as.matrix(y)"
+"0","nmix_data <- unmarkedFramePCount(y = sosp_mat)"
+"0","obs_covs <- read.csv(""obs_covs.csv"")"
+"0","head(obs_covs)"

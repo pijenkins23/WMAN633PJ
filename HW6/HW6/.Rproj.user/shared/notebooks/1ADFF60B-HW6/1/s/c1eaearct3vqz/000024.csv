@@ -1,0 +1,4 @@
+"0","#points(x = c(0, 1,2,3), y = prd[, 'Predicted'], pch = 16,cex = 3)"
+"0","axis(side = 1, at = c(0, 1,2,3),"
+"0","     labels = c('a', 'b','c','d'),"
+"0","     cex.axis = 1.5)"
