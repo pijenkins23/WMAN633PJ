@@ -1,0 +1,212 @@
+---
+title: "FinalExam"
+author: "Peter Jenkins"
+date: "5/5/2021"
+output: html_document
+---
+
+# 1. Describe a sampling procedure that may have given rise to this dataset.
+
+Randomly selecting 100 sites and doing 3 replicate surveys in which you collect if a species is detected or not detected (1 or 0) at each site for each replicate.
+Collecting site presence covariates x1 and x2 once per site.
+Record detection covariatates detcov1 and detcove 2 for each replicate survey.  
+
+
+
+# 2. Import data and fit an occupancy model that assumes detection probability is an additive function of obscovs1 and obscovs2; and that occupancy probability is an additive function of x1 and x2.
+```{r}
+
+y <- read.csv('detect.csv')
+#head(y)
+
+library(unmarked)
+# converting count data into a matrix
+# matrix format required by unmarkedFrameoccu
+sosp_mat <- as.matrix(y)
+nmix_data <- unmarkedFrameOccu(y = sosp_mat)
+
+
+# Covariate s
+##################
+
+obs_covs1 <- read.csv('obscovs1.csv')
+obs_covs2 <- read.csv('obscovs2.csv')
+#head(obs_covs1)
+#head(obs_covs2)
+
+obs_covs <- list(
+  obscovs1 = data.frame(obs_covs1),
+  obscovs2 = data.frame(obs_covs2)
+  
+)
+
+
+site_covs <- read.csv('sitecovs.csv')
+#head(site_covs)
+
+
+
+
+nmix_data <- unmarkedFrameOccu(y = sosp_mat, # detection / non-detection
+                                 siteCovs = site_covs, # site-level covs
+                                 obsCovs = obs_covs) 
+
+
+fit <- occu(formula = ~ obscovs1 + obscovs2 ~ x1 + x2,
+              data = nmix_data)
+fit
+
+```
+
+# 3. Use contrasts to determine if occupancy probability different when x1 = 2 vs.when x1 = -2?
+```{r}
+
+cm <- matrix(c(0, 2, 0, 0, -2, 0), nrow = 2, byrow = T ) #unsure? 
+cnt <- linearComb(obj = fit, coefficients = cm, type = 'state')
+
+pnorm(-1 * abs(coef(cnt) / SE(cnt))) * 2
+```
+  We fail to reject our null hypothesis because pvalue >0.05. The occupancy probability is not significantly different between when x=2 abd when x=-2. 
+
+
+
+  
+  4. Use model selection to compare the following 4 models. Which model is the "top" model? How do you
+know?
+  (a) ∼ obscovs1 + obscovs2 ∼ x1 + x2
+(b) ∼ obscovs1 + obscovs2 ∼ x1
+(c) ∼ obscovs1 + obscovs2 ∼ x2
+(d) ∼ obscovs1 + obscovs2 ∼ 1
+```{r}
+
+fit1 <- occu(formula = ~ obscovs1 + obscovs2 ~ x1 + x2,
+               data = nmix_data)
+fit2 <- occu(formula = ~ obscovs1 + obscovs2 ~ x1 ,
+               data = nmix_data)
+fit3 <- occu(formula = ~  obscovs1 + obscovs2 ~  x2,
+               data = nmix_data)
+fit4 <- occu(formula = ~ obscovs1 + obscovs2 ~ 1,
+               data = nmix_data)
+
+cand.set <- list(P1 = fit1, P2 = fit2, P3= fit3, P4 = fit4)
+
+library(AICcmodavg)
+mods <- aictab(cand.set = cand.set, second.ord = F)
+head(mods)
+```
+
+
+
+
+
+# 5. Obtain model-averaged estimates of x1. What conclusions do you draw regarding this variable?
+```{r}
+avg_obscov <- modavgShrink(cand.set = cand.set,
+                             parm = 'x1',
+                             second.ord = F,
+                             parm.type = 'psi')
+
+avg_obscov
+```
+  
+
+The model averaged confidence intervals overlap 0 so I conclude this coefficient
+has zero influence on detection probability.
+
+# 6. Plot model-averaged predictions of how detection probability changes across the observed range of obscovs2.
+
+```{r}
+
+nd <- data.frame(
+  obscovs1 = rep(0,100),
+  obscovs2 = seq(min(obs_covs$obscovs2), max(obs_covs$obscovs2), length.out = 100))
+
+
+prd <- modavgPred(cand.set = cand.set, newdata= nd, second.ord = F, parm.type = "detect")
+plot(x = nd$obscovs2, y = prd$mod.avg.pred,  type = 'l', 
+     ylim = c(min(prd$lower.CL), max(prd$upper.CL)), 
+     ylab = "Modeled Detection Probability", xlab = "Observed Range of obscovs2")
+lines(x = nd$obscovs2, y = prd$upper, lty = 2)
+lines(x = nd$obscovs2, y = prd$lower, lty = 2)
+```
+
+
+
+
+
+# 7. Evaluate the fit of the top model using the sum of squared Pearson’s residuals as a test statistic. A function for evaluating this test statistic is provided at the bottom of the exam.
+```{r}
+chisq <- function(mod){ # mod is fitted model
+  obs <- getY(mod@data) # observed
+  ex <- fitted(mod) # expected
+  ts <- (ex - obs) ^ 2 / # chi-square statistic
+    (ex * (1 - ex))
+  return(sum(ts))
+}
+chisq(fit3)
+
+
+
+
+```
+
+# 8. What is the closure assumption? What are the consequences of violating the closure assumption? Tell me why violating the closure assumption results in these consequences.
+
+Closure is if you detect a species once during a survey that species is there for all consecutive surveys. If the species is not observed it is absent during all surveys. We can try to limit error in this by sampling close together. The consequences of violating closure is underestimation of detection probability and overestimation of abundance.
+
+P is over under estimated compared to real life if an individual is absent.
+
+# 9. Assume you have variable p that is bounded between 0 and 1. Further, assume p = 0.25. What link function would you use to transform p to the real number line? What is the analogous vale of p = 0.25 on the real number line?
+
+bernulli model 
+  site occupancy - site variables
+  detection prob - detection covariates wind exc
+  bounded between 0 and 1   ( use the inverse logit function to go from real   to 0 and 1 ) plogis in r 
+  
+  log odds scale is dealing with probability 
+    odds    prob / 1- prob 
+    
+```{r}
+plogis(0.25)
+```
+
+# 10. Assume you have a random variable that can only obtain values of 0, 1, 2, ..., ∞. What probability distribution might you use to model such data? What is (are) the parameter(s) of this probability distribution? What link function might you use if you wanted to model that parameter as a linear function of variables?
+
+abundance models 
+  Poisson model = positive values of count of individuals in integers 
+  one parameter = rate of count 
+  mean and variance are the same 
+    > 0 restirction 
+    
+We use the log link function to transform exp abundance to real number line, which we would then use to model that parameter as a linear function of variables. 
+
+We use exp to shove it positive side of number line 
+
+
+
+
+
+# 11. Discuss null hypothesis significance testing within the context of model checking. Be sure to include the following phrases in your description:
+• assumptions of the null hypothesis
+• test statistic
+• p-value
+• reject or fail to reject the null hypothesis
+
+
+A test statistic is a numeric summary of our data compared to a theoretical distribution. If our test statistic could have arisen from the theoretical distribution associated with our null hypothesis we fail to reject the null hypothesis. We can obtain the theoretical distribution of our test statistic by obtaining occupancy and detection probabilities and calculate another test statistic a bunch of time. 
+
+The p value is obtained from the simulated distribution of the test statistic. The pvalue is the probability of observing a more  extreme test statistic under the assumptions of the null hypothesis. If the p value is <0.05 you reject the null hypothesis. If your pvalue us >0.05 you fail to reject the null hypothesis, because your test statistic could have possibly arisen from the theoretical distribution. 
+
+
+# For questions 12 and 13, assume the following linear model (6 points each):
+y = β0 + β1x1 + β2x2 + β3x3 + β4x2x3
+where x1 is categorical and is coded = 1 if variable x1 obtains level “b”, and is coded = 0 if x1 obtains level “a”; and x2 and x3 are both continuous random variables.
+
+
+# 12. interpret the coefficient β1
+
+B1 is the difference between the levels 'b' and levels 'a'. 
+
+# 13. how does the response variable change in response to a 1-unit change in x2?
+
+ The response variable changes B2  units for every 1-unit increase in x2 when x3 = 0. 
